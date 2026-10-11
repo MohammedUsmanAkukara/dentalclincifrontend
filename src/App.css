@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #155EEF;
+  --color-brand-teal: #0D9488;
+}
+
+body {
+  @apply font-sans text-[#172033] antialiased scroll-smooth selection:bg-[#155EEF] selection:text-white;
+}
