@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // Backend ka base URL
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api', 
+  // baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://dentalclinicbackend.vercel.app/', 
 });
 
 // JWT Token Interceptor: Har request me automatically token bhejne ke liye
