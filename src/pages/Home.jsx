@@ -1,28 +1,44 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import * as LucideIcons from 'lucide-react'; // Dynamic icons ke liye
-import { MapPin, ChevronRight, CheckCircle2, Clock, ShieldCheck } from 'lucide-react';
+// Pura library import karne ke bajay sirf wahi icons import karo jo DB se aa sakte hain
+import { MapPin, ChevronRight, CheckCircle2, Clock, ShieldCheck, Stethoscope, Activity, Heart, Smile } from 'lucide-react';
 import { FadeUp, StaggerContainer, StaggerItem } from '../components/ui/Animations';
 import { useContent } from '../context/ContentContext';
 
-// Helper component to render icon dynamically from string name
+// Constant variables ko component ke bahar rakho taaki baar-baar render na ho
+const SERVICE_COLORS = [
+  'text-[#155EEF] bg-blue-100',
+  'text-[#0D9488] bg-teal-100',
+  'text-purple-600 bg-purple-100'
+];
+
+// Dynamic icons ke liye map use karo, isse bundle size chota rahega
+const iconMap = {
+  Stethoscope,
+  Activity,
+  Heart,
+  Smile
+  // Jo bhi aur icons DB mein hain unhe yahan add kar lena
+};
+
 const DynamicIcon = ({ name, className }) => {
-  const IconComponent = LucideIcons[name] || LucideIcons.Stethoscope;
+  const IconComponent = iconMap[name] || Stethoscope;
   return <IconComponent className={className} />;
 };
 
 const Home = () => {
-  const { cmsData, activeServices } = useContent();
-  const data = cmsData?.home; // Extract Home page data
+  // isLoading ko context se nikal lo agar available hai
+  const { cmsData, activeServices, isLoading } = useContent(); 
+  const data = cmsData?.home; 
 
-  if (!data) return null; // Safety check
-
-  // Generate random colors for services cards if needed
-  const serviceColors = [
-    'text-[#155EEF] bg-blue-100',
-    'text-[#0D9488] bg-teal-100',
-    'text-purple-600 bg-purple-100'
-  ];
+  // Loading state taaki user ko blank screen na dikhe
+  if (isLoading || !data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F7FAFC]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#155EEF]"></div>
+      </div>
+    );
+  }
 
   return (
     <main className="w-full overflow-hidden">
@@ -88,6 +104,8 @@ const Home = () => {
                 <img 
                   src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
                   alt={data.heroTitle} 
+                  loading="eager" 
+                  fetchpriority="high"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#155EEF]/20 to-transparent mix-blend-multiply"></div>
@@ -126,10 +144,9 @@ const Home = () => {
           </div>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Database se aayi hui top 3 services dikhayenge */}
             {activeServices?.slice(0, 3).map((service, idx) => (
               <StaggerItem key={service._id} className="bg-[#F7FAFC] p-8 rounded-3xl border border-gray-100 hover:shadow-xl transition-shadow group flex flex-col h-full">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform ${serviceColors[idx % 3]}`}>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform ${SERVICE_COLORS[idx % 3]}`}>
                   <DynamicIcon name={service.iconName} className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold text-[#172033] mb-3">{service.title}</h3>
